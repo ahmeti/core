@@ -1,0 +1,43 @@
+{
+    "name": "ahmeti/core",
+    "description": "Ahmeti Core",
+    "homepage": "https://ahmetimamoglu.com.tr",
+    "keywords": [
+        "ahmeti",
+        "core"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ahmet Imamoglu",
+            "email": "ahmet363@gmail.com",
+            "role": "Developer",
+            "homepage": "https://ahmetimamoglu.com.tr"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3"
+    },
+    "require-dev": {},
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Ahmeti\\Core": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "aliases": {},
+            "providers": [
+                "Ahmeti\\Core\\CoreServiceProvider",
+                "Ahmeti\\Core\\FormServiceProvider"
+            ]
+        }
+    }
+}
