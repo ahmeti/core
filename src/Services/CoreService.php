@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Ahmeti\Core\Services;
 
 use App\Models\Company;
 use App\Models\ExchangeRate;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPExcel_Shared_Date;
 
-class Core {
+class CoreService {
 
     private $_pageId;
     private $_title;

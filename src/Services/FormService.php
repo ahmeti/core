@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services;
+namespace Ahmeti\Core\Services;
 
 use App\Cores\InputGroup;
 use App\Core;
 
-class Form {
+class FormService {
 
     private $_type = 'normal'; # normal | filter | settings
     private $_inside = false; # Sadece form içeriğini döndürür. form tagını döndürmez.

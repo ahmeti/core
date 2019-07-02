@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahmeti\Core;
+namespace Ahmeti\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Modules\Core\Services\CoreService;
