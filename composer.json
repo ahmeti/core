@@ -33,7 +33,11 @@
     "prefer-stable": true,
     "extra": {
         "laravel": {
-            "aliases": {},
+            "aliases": {
+                "Core": "App\\Core",
+                "Form": "App\\Form",
+                "Response": "App\\Response"
+            },
             "providers": [
                 "Ahmeti\\Core\\Providers\\CoreServiceProvider",
                 "Ahmeti\\Core\\Providers\\FormServiceProvider",

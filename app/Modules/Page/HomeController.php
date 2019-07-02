@@ -2,38 +2,36 @@
 
 namespace App\Modules\Page;
 
-use App\Core;
-use App\Form;
 use App\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        $this->middleware('auth');
+        view()->addNamespace('Page', app_path('Modules/Page/Views'));
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function index()
+    public function index(Request $req)
     {
+        $isRedirect = $req->session()->has('ajax-request');
+        $isAjax = $req->ajax();
 
+        if ( $isRedirect === true) {
+            $includeIndex = false;
+            return view('Page::HomeFirst', compact('includeIndex'));
 
-        dd(Form::test());
-        dd(Core::userId());
-        dd(Response::status());
-        dd('Test');
+        }elseif ( $isAjax === false ) {
+            $includeIndex = true;
+            return view('Page::HomeFirst', compact('includeIndex'));
+        }
 
-        return view('home');
+        $body = view('Page::HomeFirst')
+            ->render();
+
+        return Response::title('Anasayfa')
+            ->body($body)
+            ->get();
     }
 }

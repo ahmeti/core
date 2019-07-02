@@ -14,7 +14,7 @@ $ php artisan make:auth
 
 04 - ahmeti-core-js NPM install
 ```php
-$ npm i --save-dev ahmeti-core-js
+$ npm i --save-dev ahmeti-core-js --no-audit
 ```
 
 05 - Ahmeti/Core composer install
