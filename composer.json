@@ -35,8 +35,8 @@
         "laravel": {
             "aliases": {},
             "providers": [
-                "Ahmeti\\Core\\CoreServiceProvider",
-                "Ahmeti\\Core\\FormServiceProvider"
+                "Ahmeti\\Core\\Providers\\CoreServiceProvider",
+                "Ahmeti\\Core\\Providers\\FormServiceProvider"
             ]
         }
     }
