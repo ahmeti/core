@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Facades\CoreService;
+use App\Core;
 use Closure;
 
-class CheckAjaxRequest
+class AuthAjaxRequest
 {
     /**
      * Handle an incoming request.
@@ -18,12 +18,12 @@ class CheckAjaxRequest
     {
         $firstSegments = ['home'];
 
-        if( auth()->check() && auth()->user()->status != 'on' ){
+        if( auth()->check() && auth()->user()->status != 1 ){
             // If Blocked User
             abort(403, 'Unauthenticated.');
         }
 
-        if ( CoreService::companyId(false) < 1 && $request->segment(1) === 'home'){
+        if ( Core::companyId() < 1 && $request->segment(1) === 'home'){
             return redirect('login');
         }
 

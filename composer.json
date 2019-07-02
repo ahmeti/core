@@ -36,7 +36,8 @@
             "aliases": {},
             "providers": [
                 "Ahmeti\\Core\\Providers\\CoreServiceProvider",
-                "Ahmeti\\Core\\Providers\\FormServiceProvider"
+                "Ahmeti\\Core\\Providers\\FormServiceProvider",
+                "Ahmeti\\Core\\Providers\\ResponseServiceProvider"
             ]
         }
     }
