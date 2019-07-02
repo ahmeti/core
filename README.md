@@ -37,15 +37,15 @@ $ gulp init
 config/auth.php
 ```
 
-09 - Add Kernel AuthAjaxRequest Middleware
+09 - Add Route AuthAjaxRequest Middleware (app/Http/Kernel.php)
 ```php
-    protected $routeMiddleware = [
-        ...
-        'auth.ajax' => \App\Http\Middleware\AuthAjaxRequest::class,
-    ];
+protected $routeMiddleware = [
+    ...
+    'auth.ajax' => \App\Http\Middleware\AuthAjaxRequest::class,
+];
 ```
 
 09 - Change Route Name Space (app/Providers/RouteServiceProvider.php)
 ```php
-    protected $namespace = 'App\Modules';
+protected $namespace = 'App\Modules';
 ```
