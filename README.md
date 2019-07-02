@@ -32,9 +32,9 @@ $ cp node_modules/ahmeti-core-js/gulpfile.js gulpfile.js
 $ gulp init
 ```
 
-08 - Change User Model Name Space
+08 - Change User Model Name Space (config/auth.php)
 ```php
-config/auth.php
+App\Modules\User\Models\User
 ```
 
 09 - Add Route AuthAjaxRequest Middleware (app/Http/Kernel.php)
