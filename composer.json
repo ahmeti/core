@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Ahmeti\\Core": "src/"
+            "Ahmeti\\Core\\": "src/"
         }
     },
     "minimum-stability": "dev",
