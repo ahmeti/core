@@ -19,18 +19,16 @@ class HomeController extends Controller
         $isAjax = $req->ajax();
 
         if ( $isRedirect === true) {
-            $includeIndex = false;
-            return view('Page::HomeFirst', compact('includeIndex'));
+            return view('Page::HomeRedirect');
 
         }elseif ( $isAjax === false ) {
-            $includeIndex = true;
-            return view('Page::HomeFirst', compact('includeIndex'));
+            return view('Page::Home');
         }
 
-        $body = view('Page::HomeFirst')
+        $body = view('Page::HomeAjax')
             ->render();
 
-        return Response::title('Anasayfa')
+        return Response::title('Homepage')
             ->body($body)
             ->get();
     }

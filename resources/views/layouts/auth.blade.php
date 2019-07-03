@@ -25,7 +25,7 @@
 
     <script type="text/javascript">
         var baseApp = {
-            company_uuid: '{{ Core::company()->uuid }}',
+            company_uuid: null,
             url: '{{ url('/') }}',
             userid: '{{ Core::userId() }}',
             isMobile: {!! Core::isMobile() ? 'true' : 'false' !!},
@@ -58,14 +58,14 @@
                     <span class="icon-bar"></span>
                 </button>
 
-                <a style="padding:5px 15px" class="navbar-brand{{ Core::userId() > 0 ? ' ajaxPage' : '' }}" href="{{ Core::userId() > 0 ? route('timelines.index') : url('/') }}">
-                    <img style="width: 140px;padding-top:10px" src="{{ url('/images/logo.png') }}"/>
+                <a style="padding:5px 15px" class="navbar-brand{{ Core::userId() > 0 ? ' ajaxPage' : '' }}" href="{{ Core::userId() > 0 ? route('home') : url('/') }}">
+                    <img style="width: 140px;max-height: 48px" src="{{ url('/images/logo.png') }}"/>
                 </a>
             </div>
 
             <!-- /.navbar-header -->
 
-            <?php if ( Core::userId(false) > 0 ){ ?>
+            <?php if ( Core::userId() > 0 ){ ?>
 
             <ul class="nav navbar-top-links navbar-right">
 
@@ -74,6 +74,7 @@
                             id="app-advanced-search" class="form-control" placeholder="Firma, Kontak, Sayfa Ara..." tabindex="-1" aria-hidden="true"></select>
                 </li>
 
+                {{--
                 @php ( $countTask = \App\Models\Task::where('kullanici_id', Core::userId())->whereIn('durum', ['wait', 'work'])->count() )
 
                 <li class="app-navbar-top-task" title="Bekleyen görevlerinizi gösterir.">
@@ -82,6 +83,7 @@
                         <span class="app-user-task-count badge" style="background-color: #d9534f">{{ $countTask }}</span>
                     </a>
                 </li>
+                --}}
 
 
                 <!-- /.dropdown -->
@@ -109,23 +111,23 @@
             </ul>
             <!-- /.navbar-top-links -->
 
-            <div class="navbar-default sidebar" role="navigation" style="{{ Core::isMobile() ? '' : 'margin-bottom:120px'  }}">
+            <div class="navbar-default sidebar" role="navigation" style="{{ Core::isMobile() ? '' : 'margin-bottom:120px;margin-top:50px'  }}">
                 <div class="sidebar-nav navbar-collapse {{ Core::isMobile() ? 'collapse' : ''  }}" style="{{ Core::isMobile() ? 'height:1px' : ''  }}">
                     <ul class="nav" id="side-menu">
 
-                        {{--
+
                         @php ( $menu = Core::getUserMenu() )
 
                         @foreach ($menu as $m)
 
-                            @if ($m['pid']==0 && $m['url'] !="")
+                            @if ($m['parent_id']==0 && $m['url'] !="")
                                 <li>
-                                    <a class="ajaxPage {{ $m['class'] }}" href="{{ url('/'.$m['url']) }}"><i class="{{ $m['icon'] }} fa-fw"></i> {{ $m['adi'] }}</a>
+                                    <a class="ajaxPage {{ $m['class'] }}" href="{{ url('/'.$m['url']) }}"><i class="{{ $m['icon'] }} fa-fw"></i> {{ $m['name'] }}</a>
                                 </li>
-                            @elseif( $m['pid']==0 && $m['url']=="" && $m['id']!=0 && !empty($menu[$m['id']]['sub']) )
+                            @elseif( $m['parent_id']==0 && $m['url']=="" && $m['id']!=0 && !empty($menu[$m['id']]['sub']) )
                                 <li>
                                     <a href="javascript:void(0)" class="{{ $m['class'] }}">
-                                        <i class="{{ $m['icon'] }} fa-fw"></i> {{ $m['adi'] }}<span class="fa arrow"></span>
+                                        <i class="{{ $m['icon'] }} fa-fw"></i> {{ $m['name'] }}<span class="fa arrow"></span>
                                     </a>
                                     <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0">
                                         @php( $countSub = count((array)$menu[$m['id']]['sub']) )
@@ -133,7 +135,7 @@
                                         @foreach ((array)$menu[$m['id']]['sub'] as $sub)
                                             <li>
                                                 <a class="ajaxPage {{ $sub['class'] }}" href="{{ url('/'.$sub['url']) }}">
-                                                    <i class="{{ $sub['icon'] }} fa-fw"></i> {{ $sub['adi'] }}
+                                                    <i class="{{ $sub['icon'] }} fa-fw"></i> {{ $sub['name'] }}
                                                 </a>
                                             </li>
                                             @if( str_is('*divider*', $sub['class']) && $countSub > $subI )
@@ -147,7 +149,7 @@
                                 </li>
                             @endif
                         @endforeach
-                        --}}
+
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

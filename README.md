@@ -20,6 +20,10 @@ $ npm i --save-dev ahmeti-core-js --no-audit
 05 - Ahmeti/Core composer install
 ```php
 $ composer require ahmeti/core:dev-master
+$ composer require guzzlehttp/guzzle
+$ composer require elibyy/tcpdf-laravel
+$ composer require maatwebsite/excel
+$ composer require intervention/image
 ```
 
 06 - Copy Gulp File

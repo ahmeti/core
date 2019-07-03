@@ -2,16 +2,13 @@
 
 namespace Ahmeti\Core\Services;
 
-use App\Models\Company;
-use App\Models\ExchangeRate;
-use App\Models\Log;
-use App\Models\Option;
-use App\Models\Page;
-use App\Models\Permission;
-use App\Models\Views\ViewCurrBalance;
-use App\Modules\Dealer\Models\Dealer;
+# use App\Models\ExchangeRate;
+# use App\Models\Log;
+use App\Modules\Company\Models\Company;
+use App\Modules\Page\Models\Page;
 use App\Modules\Status\Models\Status;
-use App\Modules\UserStatusLog\Models\UserStatusLog;
+use App\Modules\User\Models\Permission;
+# use App\Modules\UserStatusLog\Models\UserStatusLog;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
@@ -20,8 +17,6 @@ use PHPExcel_Shared_Date;
 
 class CoreService {
 
-    private $_pageId;
-    private $_title;
     private $breadcrumb = [];
     private $companyData;
     private $statuses = [];
@@ -84,7 +79,7 @@ class CoreService {
         if( empty($this->statuses) ){
 
             $statuses = DB::table((new Status)->getTable())
-                ->select(['name', 'key as id', 'value', 'icon', 'color as icon-color'])
+                ->select(['name', 'key', 'value', 'icon', 'color as icon-color'])
                 ->get()
                 ->toArray();
 
@@ -114,14 +109,20 @@ class CoreService {
 
         $newEnums = [];
         foreach ((array)$enums as $v) {
-            $newEnums[$v['id']] = $v['value'];
+            $newEnums[$v['key']] = $v['value'];
         }
         return $newEnums;
     }
 
     public function enumsSelect($key)
     {
-        return $this->enums($key);
+        $enums = $this->enums($key);
+
+        $newEnums = [];
+        foreach ((array)$enums as $v) {
+            $newEnums[] = ['id' => $v['key'], 'value' => $v['value']];
+        }
+        return $newEnums;
     }
 
     public function enumsHtml($key)
@@ -130,10 +131,10 @@ class CoreService {
 
         $newEnums = [];
         foreach ((array)$enums as $v) {
-            if(isset($v['html'])){
-                $newEnums[$v['id']] = $v['html'];
+            if( ! empty($v['html']) ){
+                $newEnums[$v['key']] = $v['html'];
             }else{
-                $newEnums[$v['id']] = '<i '.(empty($v['icon-color']) ? '' : 'style="color:'.$v['icon-color'].';" ').'class="'.$v['icon'].'"></i> '.$v['value'];
+                $newEnums[$v['key']] = '<i '.(empty($v['icon-color']) ? '' : 'style="color:'.$v['icon-color'].';" ').'class="'.$v['icon'].'"></i> '.$v['value'];
             }
         }
         return $newEnums;
@@ -156,22 +157,6 @@ class CoreService {
         }
         $this->companyData = Company::query()->first();
         return $this->companyData;
-    }
-
-    public function pageId($pageId=null)
-    {
-        if( is_null($pageId) ){
-            return $this->_pageId;
-        }
-        $this->_pageId = $pageId;
-    }
-
-    public function title($title=null)
-    {
-        if( is_null($title) ){
-            return $this->_title;
-        }
-        $this->_title = $title;
     }
 
     public function userFullName()
@@ -208,8 +193,8 @@ class CoreService {
             abort(403, 'Permission-Error.');
         }
 
-        $permission = Permission::where('kid', $this->userId())
-            ->where('sayfa_id', $pageId)
+        $permission = Permission::where('user_id', $this->userId())
+            ->where('page_id', $pageId)
             ->first();
 
         if ( is_null($permission) ){
@@ -229,8 +214,8 @@ class CoreService {
             return true;
         }
 
-        $permission = Permission::where('kid', $this->userId())
-            ->where('sayfa_id', $pageId)
+        $permission = Permission::where('user_id', $this->userId())
+            ->where('page_id', $pageId)
             ->first();
 
         if ( is_null($permission) ){
@@ -258,7 +243,7 @@ class CoreService {
         $out='<!-- Page Heading -->';
         $out.='<div class="row"><div class="col-sm-12"><ol class="breadcrumb" style="color:#337ab7">
         <li>
-            <i class="fa fa-home fa-fw"></i> <a class="ajaxPage" href="'.url('/yonetim-paneli').'">Anasayfa</a>
+            <i class="fa fa-home fa-fw"></i> <a class="ajaxPage" href="'.route('home').'">Homepage</a>
         </li>';
         foreach ($this->breadcrumb as $b) {
             $out .= $b;
@@ -275,15 +260,15 @@ class CoreService {
         $pageTable = with(new Page())->getTable();
         $items = Page::query()
             ->leftJoin($permissionTable.' AS p', function ($join) use ($companyID, $pageTable, $permissionTable){
-                $join->on('p.sayfa_id', '=', $pageTable.'.id');
+                $join->on('p.page_id', '=', $pageTable.'.id');
                 //->where($permissionTable.'.sid', $companyID);
-            })->whereRaw("( p.sid={$companyID} AND p.kid={$userId} AND {$pageTable}.goster='yes' ) OR ( pid=0 AND {$pageTable}.goster='yes' AND {$pageTable}.url IS NULL ) OR {$pageTable}.id=1")
+            })->whereRaw("( p.company_id={$companyID} AND p.user_id={$userId} AND {$pageTable}.show=1 ) OR ( parent_id=0 AND {$pageTable}.show=1 AND {$pageTable}.url IS NULL ) OR {$pageTable}.id=1")
             ->groupBy($pageTable.'.id')
-            ->orderBy($pageTable.'.no')
+            ->orderBy($pageTable.'.priority')
             ->selectRaw(implode(',', [
                 'DISTINCT('.$pageTable.'.id)',
-                $pageTable.'.pid',
-                $pageTable.'.adi',
+                $pageTable.'.parent_id',
+                $pageTable.'.name',
                 $pageTable.'.url',
                 $pageTable.'.class',
                 $pageTable.'.icon',
@@ -295,10 +280,10 @@ class CoreService {
         $menu = [];
         foreach ($items as $r) {
 
-            if ( $r['pid'] == 0){
+            if ( $r['parent_id'] == 0){
                 $menu[$r['id']]=$r;
             }else{
-                $menu[$r['pid']]['sub'][]=$r;
+                $menu[$r['parent_id']]['sub'][]=$r;
             }
         }
         return $menu;
@@ -400,12 +385,12 @@ class CoreService {
         }
     }
 
-    public function options($groupId)
+    public function options($optionId)
     {
-        $options = Option::where('secgrup_id', $groupId)
-            ->where('durum', 'on')
-            ->select(['id', 'secenek as value'])
-            ->orderBy('secenek')
+        $options = OptionItem::where('option_id', $optionId)
+            ->where('status', 1)
+            ->select(['id', 'name as value'])
+            ->orderBy('name')
             ->get();
 
         return $options;

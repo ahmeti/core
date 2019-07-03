@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CompanyScope implements Scope
 {
+    private $columnName = 'company_id';
+
+    public function __construct($columnName = null)
+    {
+        if( ! empty($columnName) ){
+            $this->columnName = $columnName;
+        }
+    }
+
     /**
      * Apply the scope to a given Eloquent query builder.
      *
@@ -18,6 +27,6 @@ class CompanyScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where('company_id', Core::companyId());
+        $builder->where($this->columnName, Core::companyId());
     }
 }
