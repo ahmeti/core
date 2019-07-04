@@ -9,10 +9,15 @@ use App\Modules\Page\Models\Page;
 use App\Modules\Status\Models\Status;
 use App\Modules\User\Models\Permission;
 # use App\Modules\UserStatusLog\Models\UserStatusLog;
+use App\Core;
+use App\Response;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use PHPExcel_Shared_Date;
 
 class CoreService {
@@ -79,7 +84,7 @@ class CoreService {
         if( empty($this->statuses) ){
 
             $statuses = DB::table((new Status)->getTable())
-                ->select(['name', 'key', 'value', 'icon', 'color as icon-color'])
+                ->select(['name', 'key', 'value', 'icon', 'color'])
                 ->get()
                 ->toArray();
 
@@ -120,7 +125,7 @@ class CoreService {
 
         $newEnums = [];
         foreach ((array)$enums as $v) {
-            $newEnums[] = ['id' => $v['key'], 'value' => $v['value']];
+            $newEnums[] = ['id' => $v['key'], 'value' => $v['value'], 'icon' => $v['icon'], 'icon-color' => $v['color']];
         }
         return $newEnums;
     }
@@ -134,7 +139,7 @@ class CoreService {
             if( ! empty($v['html']) ){
                 $newEnums[$v['key']] = $v['html'];
             }else{
-                $newEnums[$v['key']] = '<i '.(empty($v['icon-color']) ? '' : 'style="color:'.$v['icon-color'].';" ').'class="'.$v['icon'].'"></i> '.$v['value'];
+                $newEnums[$v['key']] = '<i '.(empty($v['color']) ? '' : 'style="color:'.$v['color'].';" ').'class="'.$v['icon'].'"></i> '.$v['value'];
             }
         }
         return $newEnums;
@@ -243,7 +248,7 @@ class CoreService {
         $out='<!-- Page Heading -->';
         $out.='<div class="row"><div class="col-sm-12"><ol class="breadcrumb" style="color:#337ab7">
         <li>
-            <i class="fa fa-home fa-fw"></i> <a class="ajaxPage" href="'.route('home').'">Homepage</a>
+            <i class="fa fa-home fa-fw"></i> <a class="ajaxPage" href="'.route('home').'">'.__('Anasayfa').'</a>
         </li>';
         foreach ($this->breadcrumb as $b) {
             $out .= $b;
@@ -280,8 +285,10 @@ class CoreService {
         $menu = [];
         foreach ($items as $r) {
 
+            $r['name'] = __($r['name']);
+
             if ( $r['parent_id'] == 0){
-                $menu[$r['id']]=$r;
+                $menu[$r['id']] = $r;
             }else{
                 $menu[$r['parent_id']]['sub'][]=$r;
             }
@@ -730,5 +737,31 @@ class CoreService {
             'user_id' => $id,
         ]);
         $userStatusLog->save();
+    }
+
+    public function failedValidation(Validator $validator, $title = null)
+    {
+        $errorKey = null;
+        $errorMessage = null;
+        foreach ($validator->errors()->toArray() as $key => $message){
+            $errorKey = $key;
+            $errorMessage = $message[0];
+            break;
+        }
+
+        if( $title ){
+            $response = Response::title($title)
+                ->body( Core::alert(false, __('İşlem başarısız. ').$errorMessage) )
+                ->get();
+        }else{
+            $response = Response::status(false)->message($errorMessage)->errorName($errorKey)->get();
+        }
+
+        throw new HttpResponseException($response);
+    }
+
+    public function strLimit($value, $limit = 100, $end = '...')
+    {
+        return Str::limit($value, $limit, $end);
     }
 }

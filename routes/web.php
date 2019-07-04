@@ -38,9 +38,9 @@ Route::group(['namespace' => 'Page'], function () {
 });
 
 
-Route::group(['middleware' => ['auth', 'auth.ajax'], 'namespace' => 'Page'], function () {
+Route::group(['middleware' => ['auth', 'auth.ajax']], function () {
 
-    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home', 'Page\HomeController@index')->name('home');
 
 });
 

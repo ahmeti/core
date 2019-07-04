@@ -71,7 +71,7 @@
 
                 <li id="advanced-search">
                     <select app-template="Advanced" app-class="advanced-search" set_select2ajax="1" ajaxurl="{{ url('/') }}/ara/advanced/"
-                            id="app-advanced-search" class="form-control" placeholder="Firma, Kontak, Sayfa Ara..." tabindex="-1" aria-hidden="true"></select>
+                            id="app-advanced-search" class="form-control" placeholder="{{ __('Firma, Kontak, Sayfa Ara...') }}" tabindex="-1" aria-hidden="true"></select>
                 </li>
 
                 {{--
@@ -100,8 +100,8 @@
                         </li>-->
                         <li class="divider"></li>
                         <li>
-                            <a class="ajaxPage" href="{{ route('logout') }}">
-                                <i class="fa fa-sign-out fa-fw"></i> Çıkış
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fa fa-sign-out fa-fw"></i> {{ __('Çıkış') }}
                             </a>
                         </li>
                     </ul>
@@ -110,6 +110,10 @@
                 <!-- /.dropdown -->
             </ul>
             <!-- /.navbar-top-links -->
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                {{ csrf_field() }}
+            </form>
 
             <div class="navbar-default sidebar" role="navigation" style="{{ Core::isMobile() ? '' : 'margin-bottom:120px;margin-top:50px'  }}">
                 <div class="sidebar-nav navbar-collapse {{ Core::isMobile() ? 'collapse' : ''  }}" style="{{ Core::isMobile() ? 'height:1px' : ''  }}">

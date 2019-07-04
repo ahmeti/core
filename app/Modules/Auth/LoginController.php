@@ -5,6 +5,7 @@ namespace App\Modules\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class LoginController extends Controller
 {
@@ -51,5 +52,12 @@ class LoginController extends Controller
             session()->put('user_id', auth()->user()->id);
             session()->save();
         }
+
+        if( Cookie::has('redirect_url') ){
+            $redirectUrl = Cookie::get('redirect_url');
+            return redirect($redirectUrl)->cookie(cookie()->forget('redirect_url'));
+        }
+
+        return redirect('/home')->cookie(cookie()->forget('redirect_url'));
     }
 }

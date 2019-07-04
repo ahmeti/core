@@ -49,7 +49,25 @@ protected $routeMiddleware = [
 ];
 ```
 
-09 - Change Route Name Space (app/Providers/RouteServiceProvider.php)
+10 - Make Comment Csrf Token Class
+```php
+// VerifyCsrfToken::class
+```
+
+11 - Change Route Name Space (app/Providers/RouteServiceProvider.php)
 ```php
 protected $namespace = 'App\Modules';
+```
+
+12 - Check render Function (app/Exceptions/Handler.php)
+```php
+public function render($request, Exception $exception)
+{
+    // Check
+}
+```
+
+13 - NPM run
+```php
+$ npm run dev
 ```

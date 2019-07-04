@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Core;
 use Closure;
+use Illuminate\Support\Facades\App;
 
 class AuthAjaxRequest
 {
@@ -17,6 +18,12 @@ class AuthAjaxRequest
     public function handle($request, Closure $next)
     {
         $firstSegments = ['home'];
+
+        if( auth()->check() ){
+            if( isset(auth()->user()->lang) && in_array(auth()->user()->lang, ['tr', 'en']) ){
+                App::setLocale(auth()->user()->lang);
+            }
+        }
 
         if( auth()->check() && auth()->user()->status != 1 ){
             // If Blocked User
