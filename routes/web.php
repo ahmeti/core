@@ -42,5 +42,8 @@ Route::group(['middleware' => ['auth', 'auth.ajax']], function () {
 
     Route::get('/home', 'Page\HomeController@index')->name('home');
 
+    Route::resource('processes', 'Process\ProcessController');
+    Route::get('processes/search', 'Process\ProcessController@search')->name('processes.search');
+
 });
 

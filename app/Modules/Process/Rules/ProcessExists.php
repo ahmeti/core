@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Modules\Status\Rules;
+namespace App\Modules\Process\Rules;
 
-use App\Core;
+use App\Modules\Process\Models\Process;
 use Illuminate\Contracts\Validation\Rule;
 
-class StatusExists implements Rule
+class ProcessExists implements Rule
 {
-    private $_key;
-    private $_message;
-
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($key, $message)
+    public function __construct()
     {
-        $this->_key = $key;
-        $this->_message = $message;
+        //
     }
 
     /**
@@ -30,13 +26,7 @@ class StatusExists implements Rule
      */
     public function passes($attribute, $value)
     {
-        $enums = array_keys(Core::enumsValue($this->_key));
-
-        if( in_array($value, $enums) ){
-            return true;
-        }
-
-        return false;
+        return Process::find((int)$value) ? true : false;
     }
 
     /**
@@ -46,6 +36,6 @@ class StatusExists implements Rule
      */
     public function message()
     {
-        return __($this->_message);
+        return __('Process bilgisine ulaşılamadı.');
     }
 }
