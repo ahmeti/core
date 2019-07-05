@@ -27,6 +27,8 @@ class FormService {
 
     private $_html = ''; # Form datasını tutuyor
 
+    private $_request = [];
+
     public function reset()
     {
         $this->_type = 'normal';
@@ -46,6 +48,8 @@ class FormService {
         $this->_return = false;
 
         $this->_html = '';
+
+        $this->_request = [];
     }
 
     public function id()
@@ -90,6 +94,21 @@ class FormService {
             $p[] = $this->hidden('hidemodal', request('hidemodal') );
             $p[] = $this->hidden('set_form_id', request('set_form_id') );
             $p[] = $this->hidden('element_name', request('element_name') );
+        }
+
+        if ( $this->_type === 'filter' && ! empty($this->_request) ){
+            $p[] = $this->hidden('orderByCol', $this->_request->input('orderByCol'));
+            $p[] = $this->hidden('orderByType', $this->_request->input('orderByType'));
+            $p[] = $this->hidden('limitLength', $this->_request->input('limitLength'));
+        }
+
+        if ( $this->_type === 'normal' && ! empty($this->_request) ){
+            $p[] = $this->hidden('gourl', $this->_request->input('gourl'));
+            $p[] = $this->hidden('set_element_name', $this->_request->input('set_element_name'));
+        }
+
+        if ( $this->_method === 'put' ){
+            $p[] = $this->hidden('_method', 'PUT');
         }
 
         return implode(' ', $p);
