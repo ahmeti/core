@@ -1,7 +1,7 @@
 <ul class="pagination" role="navigation" style="margin: 15px 0 0 0">
 
     <li class="disabled" aria-disabled="true">
-        <span aria-hidden="true"><strong>{{ __('Kayıt:') }}</strong> {{ number_format($paginator->total(), 0, '', '.') }}</span>
+        <span aria-hidden="true"><strong>{{ __('Kayıt') }}:</strong> {{ number_format($paginator->total(), 0, '', '.') }}</span>
     </li>
 
     @if ($paginator->hasPages())
