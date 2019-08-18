@@ -320,6 +320,42 @@ class FormService {
         return self::template($label, $p, $labeltitle, $desc, $groupclass);
     }
 
+    public function color($name, $label, $value = '', $maxlength = '', $data = [])
+    {
+        $p = [];
+        $p[]='<input type="text"';
+        $p[] = 'data-app-colorpicker="1"';
+        if ( !empty($data['id']) ){ $p[]='id="'.$data['id'].'"'; }
+        if ( !empty($name) ){ $p[]='name="'.$name.'"'; }
+        if ( !empty($value) ){ $p[]='value="'.str_replace('"', '”', $value).'"'; }
+        if ( !empty($data['class']) ){ $p[]='class="form-control input-sm '.$data['class'].'"'; }else{ $p[]='class="form-control input-sm"'; }
+        if ( !empty($data['disabled']) ){ $p[]='disabled'; }
+        if ( !empty($data['readonly']) ){ $p[]='readonly="readonly"'; }
+        if ( !empty($data['ph']) ){ $p[]='placeholder="'.$data['ph'].'"'; }
+        if ( !empty($maxlength) ){ $p[]='maxlength="'.$maxlength.'"'; }
+        if ( !empty($data['min-width']) ){ $p[]='style="min-width:'.$data['min-width'].'px !important"'; }
+        $p[]='autocomplete="off"';
+        $p[]='/>';
+
+        if ($this->_only || !empty($data['only'])){ return implode(' ', $p); }
+        if ( empty($data['labeltitle']) && isset($data['ph']) ){ $data['labeltitle'] = $data['ph']; }
+
+        $labeltitle = isset( $data['labeltitle'] ) ? $data['labeltitle'] : '';
+        $desc = isset( $data['desc'] ) ? $data['desc'] : '';
+        $groupclass = isset( $data['groupclass'] ) ? $data['groupclass'] : '';
+        $dstyle = isset( $data['dstyle'] ) ? $data['dstyle'] : '';
+        $btn = isset( $data['btn'] ) ? $data['btn'] : '';
+        $igroup = isset( $data['igroup'] ) ? $data['igroup'] : '';
+
+        if ( ! empty($btn) ){
+            return self::templateInputGroup('btn', $label, $p, $labeltitle, $desc, $btn);
+        }elseif( ! empty($igroup) ){
+            return self::templateInputGroup('group', $label, $p, $labeltitle, $desc, $igroup);
+        }
+        return self::template($label, $p, $labeltitle, $desc, $groupclass, $dstyle);
+    }
+
+
     /**
      *  Form'a Select2 AJAX ekler...
      *
@@ -740,7 +776,7 @@ class FormService {
             $p[]='<span style="display:none;" class="fa fa-refresh fa-spin fa-fw"></span>';
         }
         $p[]='<span class="butonLabel">'.$value.'</span></button>';
-        if ($this->_only){ return implode(' ', $p); }
+        if ( $this->_only || ! empty($data['only']) ){ return implode(' ', $p); }
 
         if (isset($data['label']) && $data['label']===false){
             $label = false;
