@@ -674,6 +674,58 @@ class FormService {
         return self::template($label, $p, $data['labeltitle'], $data['desc']);
     }
 
+    public function textSelect($textname, $selectName, $label, $textvalue='', $selectvalue='', $textMaxlength='', $selectList=[], $textData = [], $selectData = [], $data = [])
+    {
+        $textData['only'] = true;
+        $selectData['only'] = true;
+
+        $p = [];
+
+        $p[] = '<div class="row">';
+
+        $p[] = '<div class="col-xs-6" style="padding-right: 5px">';
+        $p[] = $this->text($textname, '', $textvalue, $textMaxlength, $textData);
+        $p[] = '</div>';
+
+        $p[] = '<div class="col-xs-6" style="padding-left: 5px">';
+        $p[] = $this->select($selectName, '', $selectvalue, $selectList, $selectData);
+        $p[] = '</div>';
+
+        $p[] = '</div>';
+
+        if ( empty($data['labeltitle']) ){ $data['labeltitle'] = $label; }
+        if ( empty($data['desc']) ){ $data['desc'] = null; }
+
+
+        return self::template($label, $p, $data['labeltitle'], $data['desc']);
+    }
+
+    public function decimalSelect($decimalname, $selectName, $label, $decimalValue='', $selectvalue='', $decimalMin='0.00', $decimalMax='', $decimalSep='.', $decimalDec=',', $selectList=[], $decimalData = [], $selectData = [], $data = [])
+    {
+        $decimalData['only'] = true;
+        $selectData['only'] = true;
+
+        $p = [];
+
+        $p[] = '<div class="row">';
+
+        $p[] = '<div class="col-xs-6" style="padding-right: 5px">';
+        $p[] = $this->decimal($decimalname, '', $decimalValue, $decimalMin, $decimalMax, $decimalSep, $decimalDec, $decimalData);
+        $p[] = '</div>';
+
+        $p[] = '<div class="col-xs-6" style="padding-left: 5px">';
+        $p[] = $this->select($selectName, '', $selectvalue, $selectList, $selectData);
+        $p[] = '</div>';
+
+        $p[] = '</div>';
+
+        if ( empty($data['labeltitle']) ){ $data['labeltitle'] = $label; }
+        if ( empty($data['desc']) ){ $data['desc'] = null; }
+
+
+        return self::template($label, $p, $data['labeltitle'], $data['desc']);
+    }
+
     /**
      *  Form'a Textarea ekler...
      *
@@ -999,7 +1051,39 @@ class FormService {
 
 
 
+    public function password($name, $label, $value = '', $maxlength = '', $data = [])
+    {
+        $p = [];
+        $p[]='<input type="password"';
+        if ( !empty($data['id']) ){ $p[]='id="'.$data['id'].'"'; }
+        if ( !empty($name) ){ $p[]='name="'.$name.'"'; }
+        if ( !empty($value) ){ $p[]='value="'.str_replace('"', '”', $value).'"'; }
+        if ( !empty($data['class']) ){ $p[]='class="form-control input-sm '.$data['class'].'"'; }else{ $p[]='class="form-control input-sm"'; }
+        if ( !empty($data['disabled']) ){ $p[]='disabled'; }
+        if ( !empty($data['readonly']) ){ $p[]='readonly="readonly"'; }
+        if ( !empty($data['ph']) ){ $p[]='placeholder="'.$data['ph'].'"'; }
+        if ( !empty($maxlength) ){ $p[]='maxlength="'.$maxlength.'"'; }
+        if ( !empty($data['min-width']) ){ $p[]='style="min-width:'.$data['min-width'].'px !important"'; }
+        $p[]='autocomplete="new-password"';
+        $p[]='/>';
 
+        if ($this->_only || !empty($data['only'])){ return implode(' ', $p); }
+        if ( empty($data['labeltitle']) && isset($data['ph']) ){ $data['labeltitle'] = $data['ph']; }
+
+        $labeltitle = isset( $data['labeltitle'] ) ? $data['labeltitle'] : '';
+        $desc = isset( $data['desc'] ) ? $data['desc'] : '';
+        $groupclass = isset( $data['groupclass'] ) ? $data['groupclass'] : '';
+        $dstyle = isset( $data['dstyle'] ) ? $data['dstyle'] : '';
+        $btn = isset( $data['btn'] ) ? $data['btn'] : '';
+        $igroup = isset( $data['igroup'] ) ? $data['igroup'] : '';
+
+        if ( ! empty($btn) ){
+            return self::templateInputGroup('btn', $label, $p, $labeltitle, $desc, $btn);
+        }elseif( ! empty($igroup) ){
+            return self::templateInputGroup('group', $label, $p, $labeltitle, $desc, $igroup);
+        }
+        return self::template($label, $p, $labeltitle, $desc, $groupclass, $dstyle);
+    }
 
 
 }
