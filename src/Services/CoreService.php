@@ -172,9 +172,17 @@ class CoreService {
         return null;
     }
 
+    public function isSuperAdmin()
+    {
+        if ( auth()->user() && auth()->user()->authority === 'superadmin' ){
+            return true;
+        }
+        return false;
+    }
+
     public function isAdmin()
     {
-        if ( auth()->user() && auth()->user()->authority === 'admin' ){
+        if ( auth()->user() && in_array(auth()->user()->authority, ['superadmin', 'admin']) ){
             return true;
         }
         return false;
@@ -182,7 +190,7 @@ class CoreService {
 
     public function isRep()
     {
-        if ( auth()->user() && auth()->user()->authority === 'rep' ){
+        if ( auth()->user() && auth()->user()->authority === 'representative' ){
             return true;
         }
         return false;
