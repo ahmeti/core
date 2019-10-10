@@ -490,91 +490,98 @@ class CoreService {
         return $default;
     }
 
-    public function totalText($sayi, $currCode = 'TRY', $separator = '.'){
+    private function numberToText($sayi){
 
-        $sayi = $this->numberFormat((float)$sayi, 2, $separator, '');
-        $sayarr = explode($separator,$sayi);
+        $o = [
+            'birlik' => ['BİR', 'İKİ', 'ÜÇ', 'DÖRT', 'BEŞ', 'ALTI', 'YEDİ', 'SEKİZ', 'DOKUZ'],
+            'onluk' => ['ON', 'YİRMİ', 'OTUZ', 'KIRK', 'ELLİ', 'ALTMIŞ', 'YETMİŞ', 'SEKSEN', 'DOKSAN'],
+            'basamak' => ['YÜZ', 'BİN', 'MİLYON', 'MİLYAR', 'TRİLYON', 'KATRİLYON']
+        ];
 
-        if(isset($sayarr[1])){
-            $sayarr[1]=str_pad($sayarr[1], 2, '0', STR_PAD_RIGHT);
-            $sayarr[1]=substr($sayarr[1], 0, 2);
+        // Sayıyı basamaklarına ayırıyoruz
+        $basamak = array_reverse(str_split(implode('', array_reverse(str_split($sayi))), 3));
+
+        // Basamak sayısını belirliyoruz
+        $basamak_sayisi = count($basamak);
+
+        // Her basamak için:
+        for ($i=0; $i < $basamak_sayisi; ++$i)
+        {
+            // Sayıyı basamaklarına ayırdığımızda basamaklar tersine döndüğü için burada ufak bir işlem ile basamakları düzeltiyoruz
+            $basamak[$i] = implode(array_reverse(str_split($basamak[$i])));
+
+            // Eğer basamak 4, 8, 15, 16, 23, 42 gibi 1 veya 2 rakamlıysa başına 3 rakama tamamlayacak şekilde "0" ekliyoruz ki foreach döngüsünde problem olmasın
+            if (strlen($basamak[$i]) == 1)
+                $basamak[$i] = '00' . $basamak[$i];
+            elseif (strlen($basamak[$i]) == 2)
+                $basamak[$i] = '0' . $basamak[$i];
         }
 
-        $str = "";
-        $items = array(
-            array("", ""),
-            array("BİR", "ON"),
-            array("İKİ", "YİRMİ"),
-            array("ÜÇ", "OTUZ"),
-            array("DÖRT", "KIRK"),
-            array("BEŞ", "ELLİ"),
-            array("ALTI", "ALTMIŞ"),
-            array("YEDİ", "YETMİŞ"),
-            array("SEKİZ", "SEKSEN"),
-            array("DOKUZ", "DOKSAN")
-        );
+        $yenisayi = array();
+
+        // Her basamak için: ($yenisayi değişkenine)
+        foreach ($basamak as $k => $b)
+        {
+            // basamağın ilk rakamı 0'dan büyük ise
+            if ($b[0] > 0)
+                // değişkene rakamın harfle yazılışı ve "yüz" ekliyoruz
+                $yenisayi[] = ($b[0] > 1 ? $o['birlik'][$b[0]-1] . ' ' : '') . $o['basamak'][0];
+
+            // basamağın 2. rakamı 0'dan büyük ise
+            if ($b[1] > 0)
+                // değişkene rakamın harfle yazılışını ekliyoruz
+                $yenisayi[] = $o['onluk'][$b[1]-1];
+
+            // basamağın 3. rakamı 0'dan büyük ise
+            if ($b[2] > 0)
+                // değişkene rakamın harfle yazılışını ekliyoruz
+                $yenisayi[] = $o['birlik'][$b[2]-1];
+
+            // değişkene basamağın ismini (bin, milyon, milyar) ekliyoruz
+            if ($basamak_sayisi > 1)
+                $yenisayi[] = $o['basamak'][$basamak_sayisi-1];
+
+            // Basamak sayısını azaltıyoruz ki her basamağın sonuna ilkinde ne yazıyorsa o yazılmasın
+            --$basamak_sayisi;
+        }
+
+        return implode(' ', $yenisayi);
+    }
+
+    public function totalText($sayi, $currCode = 'TRY', $separator = '.')
+    {
+        $sayi = $this->numberFormat((float)$sayi, 2, $separator, '');
+        $sayarr = explode($separator, $sayi);
+
+        $left = $this->numberToText($sayarr[0]);
+        $right = $this->numberToText($sayarr[1]);
 
         $currencies = [
             'TRY' => 'TÜRK LİRASI',
             'EUR' => 'EURO',
             'USD' => 'ABD DOLARI',
             'GBP' => 'İNGİLİZ STERLİNİ',
-
         ];
-
 
         $currencyCents = [
             'TRY' => 'KURUŞ',
             'EUR' => 'CENT',
             'USD' => 'CENT',
             'GBP' => 'CENT',
-
         ];
 
-        for ($eleman = 0; $eleman<count($sayarr); $eleman++) {
-
-            for ($basamak = 1; $basamak <=strlen($sayarr[$eleman]); $basamak++) {
-                $basamakd = 1 + (strlen($sayarr[$eleman]) - $basamak);
-
-
-                try {
-                    switch ($basamakd) {
-                        case 6:
-                            $str = $str . "" . $items[substr($sayarr[$eleman],$basamak - 1,1)][0] . "YÜZ";
-                            break;
-                        case 5:
-                            $str = $str . "" . $items[substr($sayarr[$eleman],$basamak - 1,1)][1];
-                            break;
-                        case 4:
-                            if ($items[substr($sayarr[$eleman],$basamak - 1,1)][0] != "BİR") $str = $str . "" . $items[substr($sayarr[$eleman],$basamak - 1,1)][0] . "BİN";
-                            else $str = $str . "BİN";
-                            break;
-                        case 3:
-                            if($items[substr($sayarr[$eleman],$basamak - 1,1)][0]=="") {
-                                $str.="";
-                            }
-                            elseif ($items[substr($sayarr[$eleman],$basamak - 1,1)][0] != "BİR" ) $str = $str . "" . $items[substr($sayarr[$eleman],$basamak - 1,1)][0] . "YÜZ";
-
-                            else $str = $str . "YÜZ";
-                            break;
-                        case 2:
-                            $str = $str . "" . $items[substr($sayarr[$eleman],$basamak - 1,1)][1];
-                            break;
-                        default:
-                            $str = $str . "" . $items[substr($sayarr[$eleman],$basamak - 1,1)][0];
-                            break;
-                    }
-                } catch (\Exception $err) {
-                    //echo $err->getMessage();
-                    //break;
-                }
-            }
-            if ($eleman< 1) $str = $str . ' '.@$currencies[$currCode].' ';
-            else {
-                if ($sayarr[1] != "00") $str = $str . ' '.@$currencyCents[$currCode];
-            }
+        if (empty($left)) {
+            $left = 'SIFIR';
         }
-        return $str;
+
+        if (!empty($right)) {
+            $right = ' '.$right.' '.@$currencyCents[$currCode];
+        }
+
+        $text = $left.' '.@$currencies[$currCode].$right;
+
+        return str_replace(' ', '', $text);
+
     }
 
     public function getAllowUploadExtensions()
