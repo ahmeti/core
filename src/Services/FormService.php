@@ -7,27 +7,27 @@ use App\Core;
 
 class FormService {
 
-    private $_type = 'normal'; # normal | filter | settings
-    private $_inside = false; # Sadece form içeriğini döndürür. form tagını döndürmez.
-    private $_param = true; # Default parametreleri forma dahil eder.
-    private $_tag = true; # Sadece form başlangıç tagını döndürür.
-    private $_ajaxform = true;
-    private $_id = null;
-    private $_action = '';
-    private $_method = 'post';
-    private $_enctype = '';
-    private $_class = 'form-horizontal';
-    private $_addclass = ''; // Sadece Form Tagına ilave class ekler
+    protected $_type = 'normal'; # normal | filter | settings
+    protected $_inside = false; # Sadece form içeriğini döndürür. form tagını döndürmez.
+    protected $_param = true; # Default parametreleri forma dahil eder.
+    protected $_tag = true; # Sadece form başlangıç tagını döndürür.
+    protected $_ajaxform = true;
+    protected $_id = null;
+    protected $_action = '';
+    protected $_method = 'post';
+    protected $_enctype = '';
+    protected $_class = 'form-horizontal';
+    protected $_addclass = ''; // Sadece Form Tagına ilave class ekler
 
-    private $_only = false; # Sadece elementleri döndürür. Divleri döndürmez.
+    protected $_only = false; # Sadece elementleri döndürür. Divleri döndürmez.
 
-    private $_left = '<div class="row">';
-    private $_right = '</div>';
-    private $_return = false; # true | false
+    protected $_left = '<div class="row">';
+    protected $_right = '</div>';
+    protected $_return = false; # true | false
 
-    private $_html = ''; # Form datasını tutuyor
+    protected $_html = ''; # Form datasını tutuyor
 
-    private $_request = [];
+    protected $_request = [];
 
     public function reset()
     {
@@ -119,7 +119,7 @@ class FormService {
         return '</form>'.$this->_right.'<!-- End Form -->';
     }
 
-    private function template($label, $tag, $label_title='', $desc='', $class='', $style='', $extraLine='')
+    protected function template($label, $tag, $label_title='', $desc='', $class='', $style='', $extraLine='')
     {
         if ( empty($label_title) ){ $label_title = $label; }
         if ( empty($style) ){ $s = ''; }else{ $s = ' style="'.$style.'"'; }
@@ -138,7 +138,7 @@ class FormService {
             '</div>';
     }
 
-    private function templateInputGroup($type, $label, $tag, $label_title = '', $desc = '', $btn = [], $extraLine = null)
+    protected function templateInputGroup($type, $label, $tag, $label_title = '', $desc = '', $btn = [], $extraLine = null)
     {
         if ( empty($label_title) ){ $label_title = $label; }
 
