@@ -119,7 +119,7 @@ class FormService {
         return '</form>'.$this->_right.'<!-- End Form -->';
     }
 
-    private function template($label, $tag, $label_title='', $desc='', $class='',$style='')
+    private function template($label, $tag, $label_title='', $desc='', $class='', $style='', $extraLine='')
     {
         if ( empty($label_title) ){ $label_title = $label; }
         if ( empty($style) ){ $s = ''; }else{ $s = ' style="'.$style.'"'; }
@@ -131,7 +131,10 @@ class FormService {
             '<span data-toggle="tooltip" title="'.trim(str_replace('*', '', $label_title)).'">'.$label.'</span>'.
             '</span>'.
             '</label>'.
-            '<div class="col-sm-9 errorMessage">'.implode(' ', $tag).( empty($desc) ? '' : '<p class="help-block">'.$desc.'</p>').'</div>'.
+                '<div class="col-sm-9 errorMessage">'.
+                    implode(' ', $tag).( empty($desc) ? '' : '<p class="help-block">'.$desc.'</p>').
+                    ( empty($extraLine) ? '' : $extraLine).
+            '</div>'.
             '</div>';
     }
 
@@ -418,7 +421,7 @@ class FormService {
             return self::templateInputGroup('group', $label, $p, $labeltitle, $desc, $igroup, $extraLine);
         }
 
-        return self::template($label, $p, $labeltitle, $desc, $groupclass);
+        return self::template($label, $p, $labeltitle, $desc, $groupclass, '', $extraLine);
     }
 
     /**
