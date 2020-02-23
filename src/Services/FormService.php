@@ -703,6 +703,32 @@ class FormService {
         return self::template($label, $p, $data['labeltitle'], $data['desc']);
     }
 
+    public function textText($text1name, $text2name, $label, $text1value='', $text2value='', $text1data = [], $text2data = [], $data = [])
+    {
+        $text1data['only'] = true;
+        $text2data['only'] = true;
+
+        $p = [];
+
+        $p[] = '<div class="row">';
+
+        $p[] = '<div class="col-xs-6" style="padding-right: 5px">';
+        $p[] = $this->text($text1name, '', $text1value, $text1data['max'], $text1data);
+        $p[] = '</div>';
+
+        $p[] = '<div class="col-xs-6" style="padding-left: 5px">';
+        $p[] = $this->text($text2name, '', $text2value, $text2data['max'], $text2data);
+        $p[] = '</div>';
+
+        $p[] = '</div>';
+
+        if ( empty($data['labeltitle']) ){ $data['labeltitle'] = $label; }
+        if ( empty($data['desc']) ){ $data['desc'] = null; }
+
+
+        return self::template($label, $p, $data['labeltitle'], $data['desc']);
+    }
+
     public function decimalSelect($decimalname, $selectName, $label, $decimalValue='', $selectvalue='', $decimalMin='0.00', $decimalMax='', $decimalSep='.', $decimalDec=',', $selectList=[], $decimalData = [], $selectData = [], $data = [])
     {
         $decimalData['only'] = true;
