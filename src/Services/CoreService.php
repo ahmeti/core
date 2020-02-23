@@ -9,6 +9,7 @@ use App\Modules\Page\Models\Page;
 use App\Modules\Status\Models\Status;
 use App\Modules\User\Models\Permission;
 # use App\Modules\UserStatusLog\Models\UserStatusLog;
+use App\Modules\Company\Services\CompanySettingService;
 use App\Core;
 use App\Response;
 use Carbon\Carbon;
@@ -778,5 +779,31 @@ class CoreService {
     public function strLimit($value, $limit = 100, $end = '...')
     {
         return Str::limit($value, $limit, $end);
+    }
+
+    public function unitPriceFormat($number, $minDecimals=2, $dec_point=',', $thousands_sep='.')
+    {
+        $long = number_format((float)$number, 5, $dec_point, $thousands_sep);
+        $exp = explode($dec_point, rtrim($long, '0'));
+
+        if( strlen($exp[1]) >= $minDecimals ){
+            return rtrim($exp[0].$dec_point.$exp[1], '.');
+        }
+
+        return $exp[0].$dec_point.str_pad($exp[1],$minDecimals,'0',STR_PAD_RIGHT);
+    }
+
+
+    public function getCompanySettings($name = null)
+    {
+        if( empty($this->companySettings) ){
+            $this->companySettings = (new CompanySettingService)->get();
+        }
+
+        if( ! empty($name) ){
+            return isset($this->companySettings->$name) ? $this->companySettings->$name : null;
+        }
+
+        return $this->companySettings;
     }
 }
