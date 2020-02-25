@@ -85,6 +85,7 @@ class CoreService {
         if( empty($this->statuses) ){
 
             $statuses = DB::table((new Status)->getTable())
+                ->whereNull('deleted_at')
                 ->select(['name', 'key', 'value', 'icon', 'color'])
                 ->get()
                 ->toArray();
