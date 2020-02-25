@@ -731,7 +731,7 @@ class CoreService {
                 .(empty($data['icon']) ? '' : '<span class="'.$data['icon'].'"></span> ').$data['mobtext'].'
                 </a>';
 
-        }elseif ( in_array($data['ext'], ['pdf']) ){
+        }elseif ( in_array($data['ext'], ['pdf', 'html']) ){
             # IFRAME
             return '<a data-toggle="tooltip" title="'.$data['title'].'" data-modal-size="xl" data-modal-type="iframe" data-modal-title="'.$data['title'].'" 
                     class="'.$data['deskclass'].' app-process" href="'.$href.'">'
