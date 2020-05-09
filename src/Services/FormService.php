@@ -13,6 +13,8 @@ class FormService {
     protected $_tag = true; # Sadece form başlangıç tagını döndürür.
     protected $_ajaxform = true;
     protected $_id = null;
+    protected $_beforeSerialize = '';
+    protected $_beforeSubmit = '';
     protected $_action = '';
     protected $_method = 'post';
     protected $_enctype = '';
@@ -70,7 +72,7 @@ class FormService {
 
         # FROM OPEN TAG
         $p = [];
-        $p[] = '<!-- Start Form -->'.$this->_left.'<form role="form" action="'.$this->_action.'" method="'.$this->_method.'"';
+        $p[] = '<!-- Start Form -->'.$this->_left.'<form data-before-serialize="'.$this->_beforeSerialize.'" data-before-submit="'.$this->_beforeSubmit.'" role="form" action="'.$this->_action.'" method="'.$this->_method.'"';
 
         if ( $this->_ajaxform === true && $this->_type !== 'filter' ){ $p[] = 'set_ajaxform="1"'; }
         if ($this->_type==='filter'){ $p[] = 'set_filterform="1"'; }
