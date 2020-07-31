@@ -562,6 +562,7 @@ class FormService {
         if ( !empty($data['ph']) ){ $p[] = 'placeholder="'.$data['ph'].'"'; }
         if ( !empty($data['startdate']) ){ $p[] = 'data-app-start-date="'.$data['startdate'].'"'; }
         if ( !empty($data['enddate']) ){ $p[] = 'data-app-end-date="'.$data['enddate'].'"'; }
+        if ( !empty($data['format']) ){ $p[] = 'data-app-format="'.$data['format'].'"'; }
         $p[] = 'autocomplete="off"';
         $p[] = '/>';
 
