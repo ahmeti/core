@@ -99,8 +99,15 @@ class FormService {
         }
 
         if ( $this->_type === 'filter' && ! empty($this->_request) ){
-            $p[] = $this->hidden('orderByCol', $this->_request->input('orderByCol'));
-            $p[] = $this->hidden('orderByType', $this->_request->input('orderByType'));
+
+            if( config('app.order_column_name') && config('app.order_type_name') ){
+                $p[] = $this->hidden(config('app.order_column_name'), $this->_request->input(config('app.order_column_name')));
+                $p[] = $this->hidden(config('app.order_type_name'), $this->_request->input(config('app.order_type_name')));
+            }else{
+                $p[] = $this->hidden('orderByCol', $this->_request->input('orderByCol'));
+                $p[] = $this->hidden('orderByType', $this->_request->input('orderByType'));
+            }
+
             $p[] = $this->hidden('limitLength', $this->_request->input('limitLength'));
         }
 
