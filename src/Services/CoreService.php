@@ -23,9 +23,9 @@ use PHPExcel_Shared_Date;
 
 class CoreService {
 
-    private $breadcrumb = [];
-    private $companyData;
-    private $statuses = [];
+    protected $breadcrumb = [];
+    protected $companyData;
+    protected $statuses = [];
 
     private function getUnique()
     {
